@@ -7,6 +7,7 @@ import {
   TopNavigationAction,
 } from "@ui-kitten/components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HamburgerMenu } from "../components/ui/HamburgerMenu";
 
 interface Props {
   title: string;
@@ -43,6 +44,7 @@ export const MainLayout = ({
 
   return (
     <Layout style={{ paddingTop: top }}>
+      <HamburgerMenu />
       <TopNavigation
         title={title}
         subtitle={subTitle}

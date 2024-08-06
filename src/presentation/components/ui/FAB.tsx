@@ -24,7 +24,7 @@ export const FAB = ({ style, onPress }: Props) => {
           borderRadius: 13,
         },
       ]}
-      accessoryLeft={<FontAwesome size={28} name="plus-circle" white />}
+      accessoryLeft={<FontAwesome size={20} name="plus-circle" white />}
       onPress={onPress}
     />
   );

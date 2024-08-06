@@ -1,15 +1,18 @@
-import React, { useRef } from "react";
-import { Button, Input, Layout } from "@ui-kitten/components";
+import React, { useEffect, useRef } from "react";
+import {
+  Button,
+  ButtonGroup,
+  Input,
+  Layout,
+  useTheme,
+} from "@ui-kitten/components";
 import { Formik } from "formik";
 import { ScrollView } from "react-native";
+import { ProductImages } from "../../components/products/ProductImages";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { MainLayout } from "../../src/presentation/layouts/MainLayout";
-import { ProductImages } from "../../src/presentation/components/products/ProductImages";
-import { usePathname } from "expo-router";
+import { MainLayout } from "../../layouts/MainLayout";
 
-export default function Products() {
-  const pathname = usePathname();
-  console.log("Current Pathname:", pathname); // Esto imprimirá la ruta actual
+export const ProductScreen = () => {
   return (
     <Formik initialValues={{}} onSubmit={() => {}}>
       {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
@@ -85,4 +88,4 @@ export default function Products() {
       )}
     </Formik>
   );
-}
+};
