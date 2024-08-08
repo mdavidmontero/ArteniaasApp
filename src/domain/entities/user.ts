@@ -5,5 +5,10 @@ export interface User {
   nombre: string;
   fotoPerfil?: string;
   telefono?: string;
-  roles: ["USER"];
+  roles: RolUsuario;
+}
+
+export enum RolUsuario {
+  ADMIN = "ADMIN",
+  CLIENTE = "CLIENTE",
 }

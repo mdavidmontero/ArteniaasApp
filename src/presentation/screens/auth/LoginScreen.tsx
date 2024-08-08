@@ -2,7 +2,7 @@ import { Input, Layout, Text, Button } from "@ui-kitten/components";
 import { Alert, ScrollView, useWindowDimensions } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useState } from "react";
-import { RootStackParams } from "../../navigator/StackNavigator";
+import { RootStackParams } from "../../navigator/SideMenuNavigator";
 
 interface Props extends StackScreenProps<RootStackParams, "LoginScreen"> {}
 

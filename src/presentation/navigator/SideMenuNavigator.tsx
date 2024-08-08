@@ -5,7 +5,7 @@ import {
   DrawerItemList,
   createDrawerNavigator,
 } from "@react-navigation/drawer";
-import { View, useWindowDimensions } from "react-native";
+import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import {
   createStackNavigator,
   StackCardStyleInterpolator,
@@ -23,6 +23,7 @@ export type RootStackParams = {
   RegisterScreen: undefined;
   HomeScreen: undefined;
   Prueba: undefined;
+  ProductScreen: { productId: string };
 };
 
 const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
@@ -57,9 +58,10 @@ export const HomeStackNavigator = () => {
       <Stack.Screen
         options={{
           cardStyleInterpolator: fadeAnimation,
+          headerShown: false,
         }}
-        name="Prueba"
-        component={Prueba}
+        name="ProductScreen"
+        component={ProductScreen}
       />
     </Stack.Navigator>
   );
@@ -75,9 +77,9 @@ export const SideMenuNavigator = () => {
         drawerType: dimensions.width >= 758 ? "permanent" : "slide",
         headerShown: true,
         headerStyle: {
-          height: 10, // Ajusta la altura de la cabecera según tus necesidades
+          height: 10,
         },
-        headerTitle: "", // Quitar título
+        headerTitle: "",
         drawerActiveBackgroundColor: globalColors.primary,
         drawerActiveTintColor: "white",
         drawerInactiveTintColor: globalColors.primary,
@@ -100,7 +102,39 @@ export const SideMenuNavigator = () => {
         component={Prueba}
         options={{
           drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Prueba",
+          drawerLabel: "Perfil",
+        }}
+      />
+      <Drawer.Screen
+        name="Categorias"
+        component={Prueba}
+        options={{
+          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
+          drawerLabel: "Categorias",
+        }}
+      />
+      <Drawer.Screen
+        name="Materiales"
+        component={Prueba}
+        options={{
+          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
+          drawerLabel: "Materiales",
+        }}
+      />
+      <Drawer.Screen
+        name="Color"
+        component={Prueba}
+        options={{
+          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
+          drawerLabel: "Colores",
+        }}
+      />
+      <Drawer.Screen
+        name="Cerrar Sesión"
+        component={Prueba}
+        options={{
+          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
+          drawerLabel: "Salir",
         }}
       />
     </Drawer.Navigator>
@@ -110,15 +144,37 @@ export const SideMenuNavigator = () => {
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   return (
     <DrawerContentScrollView {...props}>
-      <View
-        style={{
-          height: 200,
-          backgroundColor: globalColors.primary,
-          margin: 30,
-          borderRadius: 50,
-        }}
-      />
+      <View style={styles.profileContainer}>
+        <Image
+          source={{
+            uri: "https://firebasestorage.googleapis.com/v0/b/artesaniasapp-8965e.appspot.com/o/products%2F1723096428042_1j0y068d7?alt=media&token=e7884cec-31e5-4cdc-a5b5-750f6eb7c563",
+          }}
+          style={styles.profileImage}
+        />
+      </View>
       <DrawerItemList {...props} />
     </DrawerContentScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  profileContainer: {
+    height: 200,
+    backgroundColor: globalColors.primary,
+    margin: 30,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+  },
+  profileName: {
+    color: "white",
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});
