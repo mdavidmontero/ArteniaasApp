@@ -1,7 +1,8 @@
 import { Product } from "../../domain/entities/product";
+import { ProductResponse } from "../interfaces/product.response";
 
 export class ProductMaper {
-  static ProductToEntity(productRespon: Product): Product {
+  static ProductToEntity(productRespon: ProductResponse): Product {
     return {
       id: productRespon.id,
       name: productRespon.name,

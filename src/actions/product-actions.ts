@@ -15,6 +15,7 @@ import {
 import { Product } from "../domain/entities/product";
 import { db } from "../config/firebase/app";
 import { storage } from "../config/firebase/app";
+import { ProductMaper } from "../infrastructure/mappers/product.mapper";
 
 export const uploadImages = async (images: string[]): Promise<string[]> => {
   const uploadedUrls: string[] = [];
@@ -54,14 +55,15 @@ export const createProduct = async (producto: Product): Promise<void> => {
   }
 };
 
-export const getProducts = async (): Promise<Product[] | null> => {
+export const getProducts = async (): Promise<Product[]> => {
   try {
     const q = query(productosRef, orderBy("name"));
     const querySnapshot = await getDocs(q);
-    const productos: Product[] = querySnapshot.docs.map(
-      (doc) => doc.data() as Product
+    const productos = querySnapshot.docs.map((doc) => doc.data() as Product);
+    const data = productos.map((producto) =>
+      ProductMaper.ProductToEntity(producto)
     );
-    return productos;
+    return data;
   } catch (error) {
     console.log(error);
     throw new Error("Error al obtener los productos");
@@ -75,11 +77,9 @@ export const getProductById = async (
     const productoDocRef = doc(db, "productos", productId);
     const productoDocSnap = await getDoc(productoDocRef);
     if (productoDocSnap.exists()) {
-      return productoDocSnap.data() as Product;
-    } else {
-      console.error("No se encontró el producto con el ID:", productId);
-      return null;
+      return ProductMaper.ProductToEntity(productoDocSnap.data() as Product);
     }
+    return null;
   } catch (error) {
     console.error("Error al obtener producto por ID:", error);
     throw error;

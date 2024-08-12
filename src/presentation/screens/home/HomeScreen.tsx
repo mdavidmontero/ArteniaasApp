@@ -5,12 +5,13 @@ import { FAB } from "../../components/ui/FAB";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 // import { RootStackParams } from "../../navigator/StackNavigator";
 import { HamburgerMenu } from "../../components/ui/HamburgerMenu";
-import { RootStackParams } from "../../navigator/SideMenuNavigator";
 import { getProducts } from "../../../actions/product-actions";
 import { Product } from "../../../domain/entities/product";
 import { FullScreenLoader } from "../../components/ui/FullScreenLoader";
 import { ProductList } from "../../components/products/ProductList";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@ui-kitten/components";
+import { RootStackParams } from "../../navigator/SideMenuNavigator";
 
 export const HomeScreen = () => {
   const {

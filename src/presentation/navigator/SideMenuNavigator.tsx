@@ -12,18 +12,20 @@ import {
 } from "@react-navigation/stack";
 import { globalColors } from "../../config/theme/theme";
 import { MyIcon } from "../components/ui/MyIcon";
-import { Prueba } from "../screens/products/Prueba";
 import { HomeScreen } from "../screens/home/HomeScreen";
 import { ProductScreen } from "../screens/products/ProductsScreen";
 import { RegisterScreen } from "../screens/auth/RegisterScreen";
-// import { HamburgerMenu } from "../components/ui/HamburgerMenu";
+import { CategoriasScreen } from "../screens/categories/CategoriasScreen";
+import { CategoriaScreen } from "../screens/categories/CategoriaScreen";
 
 export type RootStackParams = {
   LoginScreen: undefined;
   RegisterScreen: undefined;
   HomeScreen: undefined;
-  Prueba: undefined;
+  Home: undefined;
   ProductScreen: { productId: string };
+  CategoriasScreen: undefined;
+  CategoriaScreen: { categoryId: string };
 };
 
 const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
@@ -37,37 +39,42 @@ const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator<RootStackParams>();
 
-export const HomeStackNavigator = () => {
+// Stack Navigator for Home
+const HomeStackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        options={{
-          cardStyleInterpolator: fadeAnimation,
-          headerShown: false,
-        }}
-        name="HomeScreen"
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="Home"
         component={SideMenuNavigator}
       />
+
       <Stack.Screen
-        options={{
-          cardStyleInterpolator: fadeAnimation,
-        }}
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="ProductScreen"
+        component={ProductScreen}
+      />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
         name="RegisterScreen"
         component={RegisterScreen}
       />
       <Stack.Screen
-        options={{
-          cardStyleInterpolator: fadeAnimation,
-          headerShown: false,
-        }}
-        name="ProductScreen"
-        component={ProductScreen}
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="CategoriasScreen"
+        component={CategoriasScreen}
+      />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="CategoriaScreen"
+        component={CategoriaScreen}
       />
     </Stack.Navigator>
   );
 };
 
-export const SideMenuNavigator = () => {
+// Drawer Navigator
+const SideMenuNavigator = () => {
   const dimensions = useWindowDimensions();
 
   return (
@@ -75,72 +82,39 @@ export const SideMenuNavigator = () => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerType: dimensions.width >= 758 ? "permanent" : "slide",
-        headerShown: true,
-        headerStyle: {
-          height: 10,
-        },
-        headerTitle: "",
+        headerShown: true, // Puedes establecer esto en false para ocultar el encabezado
+
         drawerActiveBackgroundColor: globalColors.primary,
         drawerActiveTintColor: "white",
         drawerInactiveTintColor: globalColors.primary,
-        drawerItemStyle: {
-          borderRadius: 100,
-          paddingHorizontal: 20,
-        },
+        drawerItemStyle: { borderRadius: 10, paddingHorizontal: 20 }, // Ajusta el padding y borderRadius
       }}
     >
       <Drawer.Screen
-        name="Home"
+        name="Productos"
         component={HomeScreen}
         options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Home",
-        }}
-      />
-      <Drawer.Screen
-        name="Prueba"
-        component={Prueba}
-        options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Perfil",
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
+          drawerLabel: "Productos",
         }}
       />
       <Drawer.Screen
         name="Categorias"
-        component={Prueba}
+        component={CategoriasScreen}
         options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
           drawerLabel: "Categorias",
-        }}
-      />
-      <Drawer.Screen
-        name="Materiales"
-        component={Prueba}
-        options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Materiales",
-        }}
-      />
-      <Drawer.Screen
-        name="Color"
-        component={Prueba}
-        options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Colores",
-        }}
-      />
-      <Drawer.Screen
-        name="Cerrar Sesión"
-        component={Prueba}
-        options={{
-          drawerIcon: ({ color }) => <MyIcon name="menu-2-outline" />,
-          drawerLabel: "Salir",
         }}
       />
     </Drawer.Navigator>
   );
 };
 
+// Custom Drawer Content
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   return (
     <DrawerContentScrollView {...props}>
@@ -157,24 +131,21 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   profileContainer: {
     height: 200,
     backgroundColor: globalColors.primary,
-    margin: 30,
+    marginVertical: 20,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
   },
   profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-  },
-  profileName: {
-    color: "white",
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: "bold",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
   },
 });
+
+export default HomeStackNavigator;

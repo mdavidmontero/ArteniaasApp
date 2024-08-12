@@ -9,10 +9,10 @@ export const HamburgerMenu = () => {
     navigation.setOptions({
       headerLeft: () => (
         <Pressable
-          style={{ margin: 10 }}
+          style={{ margin: 20 }}
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}
         >
-          <MyIcon name="menu-2-outline" />
+          <MyIcon name="menu-outline" />
         </Pressable>
       ),
     });

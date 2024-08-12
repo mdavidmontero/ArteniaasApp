@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { Button, Input, Layout, Text } from "@ui-kitten/components";
 import { Modal, StyleSheet } from "react-native";
@@ -14,18 +14,21 @@ import {
   getProductById,
   updateProduct,
 } from "../../../actions/product-actions";
-import { RootStackParams } from "../../navigator/SideMenuNavigator";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { initialValues } from "../../../types";
+import { RootStackParams } from "../../navigator/SideMenuNavigator";
+import { HamburgerMenu } from "../../components/ui/HamburgerMenu";
 
 interface Props extends StackScreenProps<RootStackParams, "ProductScreen"> {}
 export const ProductScreen = ({ route }: Props) => {
   const productIdRef = useRef(route.params.productId);
   const queryClient = useQueryClient();
 
-  const { data: product } = useQuery({
+  const { data: product, isLoading } = useQuery({
     queryKey: ["product", productIdRef.current],
     queryFn: () => getProductById(productIdRef.current),
+    enabled: productIdRef.current !== "new",
   });
 
   const handleChange = async (data: Product) => {
@@ -38,162 +41,171 @@ export const ProductScreen = ({ route }: Props) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     }
   };
-
-  if (!product) {
-    return <MainLayout title="Cargando..." />;
+  const validarData = () => {
+    if (!product) {
+      return initialValues;
+    } else {
+      return product;
+    }
+  };
+  if (isLoading) {
+    return <Text>Cargando...</Text>;
   }
+
   return (
-    <Formik initialValues={product} onSubmit={handleChange}>
-      {({ handleChange, handleSubmit, values, setFieldValue }) => (
-        <MainLayout
-          title={product.name}
-          subTitle={product.price.toString()}
-          rightAction={async () => {
-            try {
-              const photos = await cameraAdapter.getPicturesFromLibrary();
-              if (photos.length > 0) {
-                setFieldValue("image", [...values.image, ...photos]);
-              } else {
-                console.warn("No images selected");
+    <>
+      <Formik initialValues={validarData()} onSubmit={handleChange}>
+        {({ handleChange, handleSubmit, values, setFieldValue }) => (
+          <MainLayout
+            title={product?.name || "Nuevo Producto"}
+            subTitle={product?.price.toString() || "0"}
+            rightAction={async () => {
+              try {
+                const photos = await cameraAdapter.getPicturesFromLibrary();
+                if (photos.length > 0) {
+                  setFieldValue("image", [...values.image, ...photos]);
+                } else {
+                  console.warn("No images selected");
+                }
+              } catch (error) {
+                console.error("Error fetching images:", error);
               }
-            } catch (error) {
-              console.error("Error fetching images:", error);
-            }
-          }}
-          rightActionIcon="image-outline"
-          showBackButton={true}
-        >
-          <ScrollView style={{ flex: 1 }}>
-            <Layout
-              style={{
-                marginVertical: 10,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ProductImages images={values.image} />
-            </Layout>
-            <Layout style={{ marginHorizontal: 10 }}>
-              <Input
-                label={"Nombre"}
-                style={{ marginVertical: 5 }}
-                value={values.name}
-                onChangeText={handleChange("name")}
-              />
-
-              <Input
-                label={"Descripción"}
-                value={values.descripcion}
-                multiline
-                numberOfLines={5}
-                style={{ marginVertical: 5 }}
-                onChangeText={handleChange("descripcion")}
-              />
-            </Layout>
-            <Layout
-              style={{
-                marginVertical: 5,
-                marginHorizontal: 15,
-                flexDirection: "row",
-                gap: 10,
-              }}
-            >
-              <Input
-                label={"Precio"}
-                keyboardType="numeric"
-                value={values.price.toString()}
-                onChangeText={handleChange("price")}
-                style={{ flex: 1 }}
-              />
-
-              <Input
-                label={"Nombre dibujo"}
-                value={values.nombreDibujo}
-                onChangeText={handleChange("nombreDibujo")}
-                style={{ flex: 1 }}
-              />
-            </Layout>
-            <Layout style={{ marginHorizontal: 10 }}>
-              <Text>Seleccione una Categoria</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={values.category}
-                onValueChange={(itemValue) =>
-                  setFieldValue("category", itemValue)
-                }
-              >
-                <Picker.Item label="Seleccione una Opcion" value="" />
-                <Picker.Item label="Opción 2" value="opcion2" />
-                <Picker.Item label="Opción 3" value="opcion3" />
-              </Picker>
-            </Layout>
-            <Layout
-              style={{
-                marginVertical: 5,
-                marginHorizontal: 15,
-                flexDirection: "row",
-                gap: 10,
-              }}
-            >
-              <Input
-                label={"Ancho"}
-                keyboardType="numeric"
-                value={values.ancho.toString()}
-                onChangeText={handleChange("ancho")}
-                style={{ flex: 1 }}
-              />
-              <Input
-                label={"Alto"}
-                keyboardType="numeric"
-                value={values.alto.toString()}
-                onChangeText={handleChange("alto")}
-                style={{ flex: 1 }}
-              />
-            </Layout>
-
-            <Layout style={{ marginHorizontal: 10 }}>
-              <Text>Seleccione los Colores</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={values.colores}
-                onValueChange={(itemValue) =>
-                  setFieldValue("colores", itemValue)
-                }
-              >
-                <Picker.Item label="Seleccione" value="" />
-                <Picker.Item label="Opción 2" value="opcion2" />
-                <Picker.Item label="Opción 3" value="opcion3" />
-              </Picker>
-            </Layout>
-
-            <Layout style={{ marginHorizontal: 10 }}>
-              <Text>Seleccione los Materiales</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={values.material}
-                onValueChange={(itemValue) => {
-                  setFieldValue("material", itemValue);
+            }}
+            rightActionIcon="image-outline"
+            showBackButton={true}
+          >
+            <ScrollView style={{ flex: 1 }}>
+              <Layout
+                style={{
+                  marginVertical: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <Picker.Item label="Seleccione" value="" />
-                <Picker.Item label="Opción 2" value="opcion2" />
-                <Picker.Item label="Opción 3" value="opcion3" />
-              </Picker>
-            </Layout>
+                <ProductImages images={values.image} />
+              </Layout>
+              <Layout style={{ marginHorizontal: 10 }}>
+                <Input
+                  label={"Nombre"}
+                  style={{ marginVertical: 5 }}
+                  value={values.name}
+                  onChangeText={handleChange("name")}
+                />
 
-            <Button
-              accessoryLeft={<FontAwesome size={28} name="save" white />}
-              style={{ margin: 15 }}
-              onPress={() => handleSubmit()}
-            >
-              Guardar
-            </Button>
+                <Input
+                  label={"Descripción"}
+                  value={values.descripcion}
+                  multiline
+                  numberOfLines={5}
+                  style={{ marginVertical: 5 }}
+                  onChangeText={handleChange("descripcion")}
+                />
+              </Layout>
+              <Layout
+                style={{
+                  marginVertical: 5,
+                  marginHorizontal: 15,
+                  flexDirection: "row",
+                  gap: 10,
+                }}
+              >
+                <Input
+                  label={"Precio"}
+                  keyboardType="numeric"
+                  value={values.price.toString()}
+                  onChangeText={handleChange("price")}
+                  style={{ flex: 1 }}
+                />
 
-            <Layout style={{ height: 200 }} />
-          </ScrollView>
-        </MainLayout>
-      )}
-    </Formik>
+                <Input
+                  label={"Nombre dibujo"}
+                  value={values.nombreDibujo}
+                  onChangeText={handleChange("nombreDibujo")}
+                  style={{ flex: 1 }}
+                />
+              </Layout>
+              <Layout style={{ marginHorizontal: 10 }}>
+                <Text>Seleccione una Categoria</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={values.category}
+                  onValueChange={(itemValue) =>
+                    setFieldValue("category", itemValue)
+                  }
+                >
+                  <Picker.Item label="Seleccione una Opcion" value="" />
+                  <Picker.Item label="Opción 2" value="opcion2" />
+                  <Picker.Item label="Opción 3" value="opcion3" />
+                </Picker>
+              </Layout>
+              <Layout
+                style={{
+                  marginVertical: 5,
+                  marginHorizontal: 15,
+                  flexDirection: "row",
+                  gap: 10,
+                }}
+              >
+                <Input
+                  label={"Ancho"}
+                  keyboardType="numeric"
+                  value={values.ancho.toString()}
+                  onChangeText={handleChange("ancho")}
+                  style={{ flex: 1 }}
+                />
+                <Input
+                  label={"Alto"}
+                  keyboardType="numeric"
+                  value={values.alto.toString()}
+                  onChangeText={handleChange("alto")}
+                  style={{ flex: 1 }}
+                />
+              </Layout>
+
+              <Layout style={{ marginHorizontal: 10 }}>
+                <Text>Seleccione los Colores</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={values.colores}
+                  onValueChange={(itemValue) =>
+                    setFieldValue("colores", itemValue)
+                  }
+                >
+                  <Picker.Item label="Seleccione" value="" />
+                  <Picker.Item label="Opción 2" value="opcion2" />
+                  <Picker.Item label="Opción 3" value="opcion3" />
+                </Picker>
+              </Layout>
+
+              <Layout style={{ marginHorizontal: 10 }}>
+                <Text>Seleccione los Materiales</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={values.material}
+                  onValueChange={(itemValue) => {
+                    setFieldValue("material", itemValue);
+                  }}
+                >
+                  <Picker.Item label="Seleccione" value="" />
+                  <Picker.Item label="Opción 2" value="opcion2" />
+                  <Picker.Item label="Opción 3" value="opcion3" />
+                </Picker>
+              </Layout>
+
+              <Button
+                accessoryLeft={<FontAwesome size={28} name="save" white />}
+                style={{ margin: 15 }}
+                onPress={() => handleSubmit()}
+              >
+                Guardar
+              </Button>
+
+              <Layout style={{ height: 200 }} />
+            </ScrollView>
+          </MainLayout>
+        )}
+      </Formik>
+    </>
   );
 };
 
