@@ -17,6 +17,8 @@ import { ProductScreen } from "../screens/products/ProductsScreen";
 import { RegisterScreen } from "../screens/auth/RegisterScreen";
 import { CategoriasScreen } from "../screens/categories/CategoriasScreen";
 import { CategoriaScreen } from "../screens/categories/CategoriaScreen";
+import { MaterialScreen } from "../screens/materials/MaterialScreen";
+import { MaterialForm } from "../screens/materials/MaterialForm";
 
 export type RootStackParams = {
   LoginScreen: undefined;
@@ -73,7 +75,6 @@ const HomeStackNavigator = () => {
   );
 };
 
-// Drawer Navigator
 const SideMenuNavigator = () => {
   const dimensions = useWindowDimensions();
 
@@ -108,6 +109,16 @@ const SideMenuNavigator = () => {
             <MyIcon name="menu-2-outline" color={color} />
           ),
           drawerLabel: "Categorias",
+        }}
+      />
+      <Drawer.Screen
+        name="Materiales"
+        component={MaterialForm}
+        options={{
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
+          drawerLabel: "Materiales",
         }}
       />
     </Drawer.Navigator>
