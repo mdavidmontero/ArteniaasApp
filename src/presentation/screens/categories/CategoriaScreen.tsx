@@ -11,6 +11,7 @@ import {
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParams } from "../../navigator/SideMenuNavigator";
 import { Alert, View, ActivityIndicator } from "react-native";
+import { HamburgerMenu } from "../../components/ui/HamburgerMenu";
 
 interface Props extends StackScreenProps<RootStackParams, "CategoriaScreen"> {}
 
@@ -73,6 +74,9 @@ export const CategoriaScreen = ({ route, navigation }: Props) => {
 
   return (
     <CustomView>
+      <Text category="h3" style={{ textAlign: "center" }}>
+        {categoryId ? "Editar Categoria" : "Nueva Categoria"}
+      </Text>
       <Input
         placeholder="Categoria"
         style={{ marginVertical: 10 }}

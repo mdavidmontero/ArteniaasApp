@@ -28,6 +28,8 @@ export type RootStackParams = {
   ProductScreen: { productId: string };
   CategoriasScreen: undefined;
   CategoriaScreen: { categoryId: string };
+  MaterialsScreen: undefined;
+  MaterialForm: { materialId: string };
 };
 
 const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
@@ -41,7 +43,6 @@ const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator<RootStackParams>();
 
-// Stack Navigator for Home
 const HomeStackNavigator = () => {
   return (
     <Stack.Navigator>
@@ -71,6 +72,16 @@ const HomeStackNavigator = () => {
         name="CategoriaScreen"
         component={CategoriaScreen}
       />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="MaterialsScreen"
+        component={MaterialScreen}
+      />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="MaterialForm"
+        component={MaterialForm}
+      />
     </Stack.Navigator>
   );
 };
@@ -83,12 +94,11 @@ const SideMenuNavigator = () => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerType: dimensions.width >= 758 ? "permanent" : "slide",
-        headerShown: true, // Puedes establecer esto en false para ocultar el encabezado
-
+        headerShown: true,
         drawerActiveBackgroundColor: globalColors.primary,
         drawerActiveTintColor: "white",
         drawerInactiveTintColor: globalColors.primary,
-        drawerItemStyle: { borderRadius: 10, paddingHorizontal: 20 }, // Ajusta el padding y borderRadius
+        drawerItemStyle: { borderRadius: 10, paddingHorizontal: 20 },
       }}
     >
       <Drawer.Screen
@@ -113,7 +123,7 @@ const SideMenuNavigator = () => {
       />
       <Drawer.Screen
         name="Materiales"
-        component={MaterialForm}
+        component={MaterialScreen}
         options={{
           drawerIcon: ({ color }) => (
             <MyIcon name="menu-2-outline" color={color} />

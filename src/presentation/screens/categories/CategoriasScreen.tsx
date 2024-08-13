@@ -8,6 +8,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParams } from "../../navigator/SideMenuNavigator";
 import { FAB } from "../../components/ui/FAB";
 import { CustomView } from "../../components/ui/CustomView";
+import { HamburgerMenu } from "../../components/ui/HamburgerMenu";
 
 export const CategoriasScreen = () => {
   const { data: categorias } = useQuery({
@@ -17,9 +18,9 @@ export const CategoriasScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   return (
     <>
-      <View>
+      <CustomView>
         <CategoriasList categorias={categorias!} />
-      </View>
+      </CustomView>
       <FAB
         onPress={() =>
           navigation.navigate("CategoriaScreen", { categoryId: "new" })

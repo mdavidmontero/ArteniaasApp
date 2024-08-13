@@ -12,6 +12,7 @@ import { ProductList } from "../../components/products/ProductList";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@ui-kitten/components";
 import { RootStackParams } from "../../navigator/SideMenuNavigator";
+import { CustomView } from "../../components/ui/CustomView";
 
 export const HomeScreen = () => {
   const {
@@ -26,16 +27,17 @@ export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   return (
     <>
-      <MainLayout title="Productos" subTitle="Lista de Productos">
+      <CustomView>
         {isLoading ? (
           <FullScreenLoader />
         ) : (
-          <ProductList products={products!} />
+          <>
+            <ProductList products={products!} />
+          </>
         )}
-      </MainLayout>
+      </CustomView>
       <FAB
         onPress={() =>
-          // navigation.navigate("ProductScreen", { productId: "new" })
           navigation.navigate("ProductScreen", { productId: "new" })
         }
         style={{ position: "absolute", bottom: 30, right: 20 }}

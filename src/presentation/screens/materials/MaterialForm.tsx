@@ -1,20 +1,24 @@
-import React, { useState } from "react";
-import { MainLayout } from "../../layouts/MainLayout";
-import { Button, Input, Layout, Text } from "@ui-kitten/components";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Layout, Spinner, Text } from "@ui-kitten/components";
+import { Pressable, View, Alert } from "react-native";
 import { CameraOne } from "../../../config/adapters/cameraPhotos";
 import { ListImages } from "../../components/ui/ListImages";
 import { Materials } from "../../../domain/entities/materials";
 import { CustomView } from "../../components/ui/CustomView";
 import { ModalPhto } from "../../components/ui/ModalPhoto";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createMaterial,
+  getMaterialById,
+  updateMaterial,
+} from "../../../actions/materials.actions";
+import { RootStackParams } from "../../navigator/SideMenuNavigator";
+import { StackScreenProps } from "@react-navigation/stack";
 
-export const MaterialForm = () => {
+interface Props extends StackScreenProps<RootStackParams, "MaterialForm"> {}
+export const MaterialForm = ({ navigation, route }: Props) => {
+  const materialId = route.params.materialId;
+  const queryClient = useQueryClient();
   const [material, setMaterial] = useState<Materials>({
     id: "",
     name: "",
@@ -22,6 +26,16 @@ export const MaterialForm = () => {
     image: "",
   });
   const [modal, setModal] = useState(false);
+  const { data, isLoading, error } = useQuery<Materials | null>({
+    queryKey: ["materiales", materialId],
+    queryFn: () => getMaterialById(materialId),
+    enabled: !!materialId,
+  });
+  useEffect(() => {
+    if (data) {
+      setMaterial(data);
+    }
+  }, [data]);
 
   const handleTakePicture = async () => {
     const result = await CameraOne.takePicture();
@@ -42,6 +56,41 @@ export const MaterialForm = () => {
   const handlePhoto = () => {
     setModal(true);
   };
+
+  const mutation = useMutation({
+    mutationFn: (data: Materials) => {
+      return data.id ? updateMaterial(data.id, data) : createMaterial(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materiales"] });
+      navigation.goBack();
+    },
+    onError: (error) => {
+      console.error("Error saving material:", error);
+    },
+  });
+  const handleSave = () => {
+    if (!material.name.trim()) {
+      Alert.alert(
+        "Nombre Vacío",
+        "Por favor ingrese un nombre para la categoría."
+      );
+      return;
+    }
+    mutation.mutate(material);
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return <Text>Error al cargar la categoría: {error.message}</Text>;
+  }
 
   return (
     <CustomView>
@@ -71,17 +120,21 @@ export const MaterialForm = () => {
           <Input
             label="Nombre Material"
             style={{ marginVertical: 5 }}
+            value={material.name}
             onChangeText={(text) => setMaterial({ ...material, name: text })}
           />
           <Input
             label="Descripción"
             style={{ marginVertical: 5 }}
+            value={material.description}
             onChangeText={(text) =>
               setMaterial({ ...material, description: text })
             }
           />
         </Layout>
-        <Button style={{ marginVertical: 5 }}>Guardar</Button>
+        <Button onPress={handleSave} disabled={mutation.isPending}>
+          {mutation.isPending ? "Guardando..." : "Guardar"}
+        </Button>
       </View>
     </CustomView>
   );
