@@ -19,6 +19,10 @@ import { CategoriasScreen } from "../screens/categories/CategoriasScreen";
 import { CategoriaScreen } from "../screens/categories/CategoriaScreen";
 import { MaterialScreen } from "../screens/materials/MaterialScreen";
 import { MaterialForm } from "../screens/materials/MaterialForm";
+import { ColorForm } from "../screens/colors/ColorForm";
+import { ColorsScreen } from "../screens/colors/ColorScreen";
+import { DecorationScreen } from "../screens/decorations/DecorationScreen";
+import DecorationForm from "../screens/decorations/DecorationForm";
 
 export type RootStackParams = {
   LoginScreen: undefined;
@@ -30,6 +34,8 @@ export type RootStackParams = {
   CategoriaScreen: { categoryId: string };
   MaterialsScreen: undefined;
   MaterialForm: { materialId: string };
+  ColorForm: { colorId: string };
+  DecorationForm: { decorationId: string };
 };
 
 const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
@@ -82,6 +88,16 @@ const HomeStackNavigator = () => {
         name="MaterialForm"
         component={MaterialForm}
       />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="ColorForm"
+        component={ColorForm}
+      />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="DecorationForm"
+        component={DecorationForm}
+      />
     </Stack.Navigator>
   );
 };
@@ -129,6 +145,26 @@ const SideMenuNavigator = () => {
             <MyIcon name="menu-2-outline" color={color} />
           ),
           drawerLabel: "Materiales",
+        }}
+      />
+      <Drawer.Screen
+        name="Colores"
+        component={ColorsScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
+          drawerLabel: "Colores",
+        }}
+      />
+      <Drawer.Screen
+        name="Decoraciones"
+        component={DecorationScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
+          drawerLabel: "Decoraciones",
         }}
       />
     </Drawer.Navigator>
