@@ -23,13 +23,14 @@ import { ColorForm } from "../screens/colors/ColorForm";
 import { ColorsScreen } from "../screens/colors/ColorScreen";
 import { DecorationScreen } from "../screens/decorations/DecorationScreen";
 import DecorationForm from "../screens/decorations/DecorationForm";
-import { Button } from "@ui-kitten/components";
+import { Button, Text } from "@ui-kitten/components";
 import { useAuthStore } from "../store/useAuthStore";
-import { logout } from "../../actions/auth.actions";
+import { UpdatePerfilScreen } from "../screens/user/UpdatePerfil";
 
 export type RootStackParams = {
   LoginScreen: undefined;
   RegisterScreen: undefined;
+  UpdatePerfil: undefined;
   HomeScreen: undefined;
   Home: undefined;
   ProductScreen: { productId: string };
@@ -71,6 +72,11 @@ const HomeStackNavigator = () => {
         options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
         name="RegisterScreen"
         component={RegisterScreen}
+      />
+      <Stack.Screen
+        options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
+        name="UpdatePerfil"
+        component={UpdatePerfilScreen}
       />
       <Stack.Screen
         options={{ cardStyleInterpolator: fadeAnimation, headerShown: false }}
@@ -171,27 +177,44 @@ const SideMenuNavigator = () => {
           drawerLabel: "Decoraciones",
         }}
       />
+      <Drawer.Screen
+        name="Perfil"
+        component={UpdatePerfilScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <MyIcon name="menu-2-outline" color={color} />
+          ),
+          drawerLabel: "Perfil",
+        }}
+      />
     </Drawer.Navigator>
   );
 };
 
-// Custom Drawer Content
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const setUser = useAuthStore((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   const handleLogout = async () => {
     await logout();
-    setUser(null);
   };
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.profileContainer}>
         <Image
-          source={{
-            uri: "https://firebasestorage.googleapis.com/v0/b/artesaniasapp-8965e.appspot.com/o/products%2F1723096428042_1j0y068d7?alt=media&token=e7884cec-31e5-4cdc-a5b5-750f6eb7c563",
-          }}
+          source={
+            user?.fotoPerfil === ""
+              ? require("../../../assets/no-product-image.png")
+              : { uri: user?.fotoPerfil }
+          }
           style={styles.profileImage}
         />
       </View>
+      <View style={styles.containerText}>
+        <Text style={styles.infoProfile}>{user?.nombre}</Text>
+        <Text style={styles.infoProfile}>{user?.correo}</Text>
+      </View>
+
       <DrawerItemList {...props} />
       <Button onPress={handleLogout}>Salir</Button>
     </DrawerContentScrollView>
@@ -202,16 +225,23 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 const styles = StyleSheet.create({
   profileContainer: {
     height: 200,
-    backgroundColor: globalColors.primary,
-    marginVertical: 20,
+    marginVertical: 10,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
   },
   profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 170,
+    height: 170,
+    borderRadius: 100,
+  },
+  containerText: {
+    marginBottom: 10,
+  },
+  infoProfile: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

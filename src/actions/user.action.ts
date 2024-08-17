@@ -21,9 +21,11 @@ import {
   QuerySnapshot,
   getDocs,
   getDoc,
+  addDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase/app";
 import { User, UserRegisro } from "../domain/entities/user";
+import { uploadImage } from "./decoration.actions";
 const usuariosRef: CollectionReference<DocumentData> = collection(
   db,
   "usuarios"
@@ -130,5 +132,23 @@ export async function obtenerUsuarios(): Promise<User[] | null> {
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     return null;
+  }
+}
+
+export async function updatePerfil(
+  userId: string,
+  newData: Partial<User>
+): Promise<void> {
+  try {
+    const imageUrl = await uploadImage(newData.fotoPerfil!);
+
+    const docRef = await addDoc(usuariosRef, {
+      ...newData,
+      image: imageUrl,
+    });
+    await updateDoc(docRef, newData);
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    throw error;
   }
 }
