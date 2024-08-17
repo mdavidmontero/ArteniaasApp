@@ -23,6 +23,9 @@ import { ColorForm } from "../screens/colors/ColorForm";
 import { ColorsScreen } from "../screens/colors/ColorScreen";
 import { DecorationScreen } from "../screens/decorations/DecorationScreen";
 import DecorationForm from "../screens/decorations/DecorationForm";
+import { Button } from "@ui-kitten/components";
+import { useAuthStore } from "../store/useAuthStore";
+import { logout } from "../../actions/auth.actions";
 
 export type RootStackParams = {
   LoginScreen: undefined;
@@ -36,6 +39,7 @@ export type RootStackParams = {
   MaterialForm: { materialId: string };
   ColorForm: { colorId: string };
   DecorationForm: { decorationId: string };
+  Logout: undefined;
 };
 
 const fadeAnimation: StackCardStyleInterpolator = ({ current }) => {
@@ -173,6 +177,11 @@ const SideMenuNavigator = () => {
 
 // Custom Drawer Content
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
+  const setUser = useAuthStore((state) => state.setUser);
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+  };
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.profileContainer}>
@@ -184,6 +193,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         />
       </View>
       <DrawerItemList {...props} />
+      <Button onPress={handleLogout}>Salir</Button>
     </DrawerContentScrollView>
   );
 };
