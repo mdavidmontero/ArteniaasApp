@@ -1,4 +1,5 @@
 import { Product } from "../domain/entities/product";
+import { RolUsuario } from "../domain/entities/user";
 
 export const initialValues: Product = {
   id: "",
@@ -12,4 +13,12 @@ export const initialValues: Product = {
   colores: [],
   material: [],
   image: [],
+};
+
+export type registraUsuario = {
+  nombre: string;
+  correo: string;
+  telefono: string;
+  roles: RolUsuario.CLIENTE;
+  fotoPerfil: string;
 };

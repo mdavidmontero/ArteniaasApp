@@ -3,40 +3,47 @@ import { Alert, ScrollView, useWindowDimensions } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useState } from "react";
 import { MyIcon } from "../../components/ui/MyIcon";
-import { RootStackParams } from "../../navigator/MainNavigator";
+import { RootStackParams } from "../../navigator/AuthNavigator";
+import { registerUser } from "../../../actions/auth.actions";
+import { RolUsuario, User } from "../../../domain/entities/user";
+import { registraUsuario } from "../../../types";
 
 interface Props extends StackScreenProps<RootStackParams, "RegisterScreen"> {}
 
 export const RegisterScreen = ({ navigation }: Props) => {
-  // const {register} = useAuthStore();
   const { height } = useWindowDimensions();
   const [isPosting, setIsPosting] = useState(false);
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
+    nombre: "",
+    correo: "",
     password: "",
+    telefono: "",
+    roles: RolUsuario.CLIENTE,
+    fotoPerfil: "",
   });
 
   const onRegister = async () => {
     if (
-      form.email.length === 0 ||
+      form.correo.length === 0 ||
       form.password.length === 0 ||
       form.password.length === 0
     ) {
       return;
     }
-    console.log("ckick");
-    // setIsPosting(true);
-    // const wasSuccessful = await register(
-    //   form.fullName,
-    //   form.email,
-    //   form.password,
-    // );
-    // console.log(wasSuccessful);
-    // if (wasSuccessful) {
-    //   navigation.navigate('LoginScreen');
-    //   return;
-    // }
+    setIsPosting(true);
+    const wasSuccessful = await registerUser(
+      form.nombre,
+      form.correo,
+      form.password,
+      form.telefono,
+      form.roles
+    );
+
+    console.log(wasSuccessful);
+    if (wasSuccessful) {
+      navigation.navigate("LoginScreen");
+      return;
+    }
     setIsPosting(false);
     Alert.alert("Error en el registro, intente nuevamente..");
   };
@@ -55,16 +62,16 @@ export const RegisterScreen = ({ navigation }: Props) => {
             placeholder="Nombre Completo"
             accessoryLeft={<MyIcon name="person-outline" />}
             style={{ marginBottom: 10 }}
-            value={form.fullName}
-            onChangeText={(fullName) => setForm({ ...form, fullName })}
-            keyboardType="email-address"
+            value={form.nombre}
+            onChangeText={(nombre) => setForm({ ...form, nombre })}
+            keyboardType="default"
           />
           <Input
             placeholder="Telefono"
             accessoryLeft={<MyIcon name="phone-outline" />}
             style={{ marginBottom: 10 }}
-            value={form.fullName}
-            onChangeText={(fullName) => setForm({ ...form, fullName })}
+            value={form.telefono}
+            onChangeText={(telefono) => setForm({ ...form, telefono })}
             keyboardType="number-pad"
           />
           <Input
@@ -72,8 +79,8 @@ export const RegisterScreen = ({ navigation }: Props) => {
             accessoryLeft={<MyIcon name="email-outline" />}
             style={{ marginBottom: 10 }}
             keyboardType="email-address"
-            value={form.email}
-            onChangeText={(email) => setForm({ ...form, email })}
+            value={form.correo}
+            onChangeText={(correo) => setForm({ ...form, correo })}
             autoCapitalize="none"
           />
           <Input

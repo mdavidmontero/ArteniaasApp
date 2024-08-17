@@ -7,25 +7,34 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
-import { User as Users } from "../domain/entities/user";
+import {
+  RolUsuario,
+  UserRegisro,
+  User as Users,
+} from "../domain/entities/user";
 import { crearUsuario } from "./user.action";
 
 const auth = getAuth();
 
-export const registerUser = async (user: Users): Promise<string | null> => {
+export const registerUser = async (
+  nombre: string,
+  correo: string,
+  password: string,
+  telefono: string,
+  roles: RolUsuario
+): Promise<string | null> => {
   try {
     const userCredential: UserCredential = await createUserWithEmailAndPassword(
       auth,
-      user.correo,
-      user.password
+      correo,
+      password
     );
-    const usuario: Users = {
+    const usuario: UserRegisro = {
       id: userCredential.user.uid,
-      correo: user.correo,
-      nombre: user.nombre,
-      password: user.password,
-      roles: user.roles,
-      telefono: user.telefono,
+      correo,
+      nombre,
+      roles,
+      telefono,
       fotoPerfil: "",
     };
     await crearUsuario(usuario);

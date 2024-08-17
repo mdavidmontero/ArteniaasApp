@@ -23,13 +23,13 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase/app";
-import { User } from "../domain/entities/user";
+import { User, UserRegisro } from "../domain/entities/user";
 const usuariosRef: CollectionReference<DocumentData> = collection(
   db,
   "usuarios"
 );
 
-export async function crearUsuario(usuario: User): Promise<void> {
+export async function crearUsuario(usuario: UserRegisro): Promise<void> {
   try {
     const docuRef = doc(db, `usuarios/${usuario.id}`);
     await setDoc(docuRef, usuario);
@@ -45,7 +45,6 @@ export async function crearUsuarioYAutenticacion(
 ): Promise<void> {
   let userCredential: UserCredential | null = null;
   try {
-    // Crear usuario en la autenticación de Firebase
     const auth = getAuth();
     userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -53,7 +52,6 @@ export async function crearUsuarioYAutenticacion(
       password
     );
 
-    // Guardar información adicional en Firestore
     if (userCredential.user) {
       const { uid } = userCredential.user;
       const usuarioConId: User = { ...usuario, id: uid };
@@ -61,7 +59,6 @@ export async function crearUsuarioYAutenticacion(
       await setDoc(docRef, usuarioConId);
     }
   } catch (error) {
-    // Si hay un error, eliminar el usuario recién creado en la autenticación si es necesario
     if (userCredential && userCredential.user) {
       await userCredential.user.delete();
     }

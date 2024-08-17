@@ -1,13 +1,14 @@
 import { create } from "zustand";
-import "firebase/firebase-auth";
+import { User } from "../../domain/entities/user";
 
 interface userStore {
-  user: string;
+  user: User | null;
+  setUser: (user: User | null) => void;
   logout: () => void;
 }
 
-const useAuthStore = create<userStore>()((set) => ({
-  user: "",
-  setUser: (user: string) => set({ user }),
-  logout: () => set({ user: "" }),
+export const useAuthStore = create<userStore>()((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  logout: () => set({ user: null }),
 }));

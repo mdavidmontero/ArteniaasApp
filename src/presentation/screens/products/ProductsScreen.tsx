@@ -22,6 +22,7 @@ import { getColors } from "../../../actions/colors.actions";
 import { Colors } from "../../../domain/entities/colors";
 import { getMaterials } from "../../../actions/materials.actions";
 import { Materials } from "../../../domain/entities/materials";
+import { useAuthStore } from "../../store/useAuthStore";
 
 interface Props extends StackScreenProps<RootStackParams, "ProductScreen"> {}
 
@@ -29,6 +30,7 @@ export const ProductScreen = ({ route, navigation }: Props) => {
   const productIdRef = useRef(route.params.productId);
   const [selectedColors, setSelectedColors] = useState<Colors[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<Materials[]>([]);
+
   const queryClient = useQueryClient();
   // Todo: Pasar las consultas con react query a un customHook
 

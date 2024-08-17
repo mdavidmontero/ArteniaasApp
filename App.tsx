@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import HomeStackNavigator from "./src/presentation/navigator/SideMenuNavigator";
 import { createStackNavigator } from "@react-navigation/stack";
+import MainNavigator from "./src/presentation/navigator/MainNavigator";
 // import { StackNavigator } from "./src/presentation/navigator/StackNavigator";
 const Stack = createStackNavigator();
 const queryClient = new QueryClient();
@@ -15,13 +16,7 @@ export default function App() {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
         <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Admin"
-              component={HomeStackNavigator}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
+          <MainNavigator />
         </NavigationContainer>
       </ApplicationProvider>
     </QueryClientProvider>
