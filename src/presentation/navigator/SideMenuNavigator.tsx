@@ -26,6 +26,7 @@ import DecorationForm from "../screens/decorations/DecorationForm";
 import { Button, Text } from "@ui-kitten/components";
 import { useAuthStore } from "../store/useAuthStore";
 import { UpdatePerfilScreen } from "../screens/user/UpdatePerfil";
+import { logout } from "../../actions/auth.actions";
 
 export type RootStackParams = {
   LoginScreen: undefined;
@@ -194,9 +195,9 @@ const SideMenuNavigator = () => {
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const setUser = useAuthStore((state) => state.setUser);
   const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
   const handleLogout = async () => {
     await logout();
+    setUser(null);
   };
   return (
     <DrawerContentScrollView {...props}>

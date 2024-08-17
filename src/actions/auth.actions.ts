@@ -68,11 +68,7 @@ export const login = async (
 };
 
 export const logout = async (): Promise<void> => {
-  try {
-    await signOut(auth);
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error);
-  }
+  await signOut(auth);
 };
 
 export const onAuthStateChangedListener = (
